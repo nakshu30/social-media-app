@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user_profile.username }}'s Profile - MiniSocial</title> {# Structural Change: Added " - MiniSocial" to title #}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex; /* Structural Change: Added flexbox to body for sticky footer */
+            flex-direction: column; /* Structural Change: Added flex-direction to body for sticky footer */
+            min-height: 100vh; /* Structural Change: Added min-height to body for sticky footer */
+        }
+
+        .profile-header {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid #3B82F6;
+        }
+
+        .profile-stats div {
+            flex: 1;
+        }
+
+        .post-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .post-card {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex; /* Structural Change: Added flex for better content control in cards */
+            flex-direction: column; /* Structural Change: Added flex-direction for content in cards */
+            justify-content: space-between; /* Structural Change: Distribute space in cards */
+            min-height: 150px; /* Structural Change: Ensures minimum height for consistent card size */
+        }
+
+        .post-content {
+            flex-grow: 1; /* Structural Change: Allows content to take available space */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            white-space: normal; /* Structural Change: Allow text to wrap */
+        }
+
+        .post-footer { /* Structural Change: New class for post actions */
+            margin-top: auto; /* Pushes footer to the bottom of the flex card */
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+    <header class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-10 w-full"> {# Structural Change: Changed nav to header, added w-full #}
+        <div class="text-2xl font-bold text-blue-600">MiniSocial</div>
+        <nav class="flex items-center space-x-4"> {# Structural Change: Kept nav for the links group #}
+            <a href="javascript:history.back()" class="text-gray-600 hover:text-blue-600 focus:outline-none mr-4" aria-label="Go back">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+            <a href="{% url 'home' %}" class="text-gray-600 hover:text-blue-600 focus:outline-none" aria-label="Home">
+                <i class="fas fa-home text-xl"></i>
+            </a>
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'profile' request.user.username %}" class="flex items-center space-x-2 text-gray-800 hover:text-blue-600 focus:outline-none" aria-label="View Profile">
+                <img src="{% if request.user.profile_picture %}{{ request.user.profile_picture.url }}{% else %}https://placehold.co/40x40/FF5733/FFFFFF?text=U{% endif %}" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-blue-400 object-cover">
+                <span class="font-semibold hidden md:block">{{ request.user.username }}</span>
+            </a>
+            <a href="{% url 'logout' %}" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300 focus:outline-none">
+                Logout
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}" class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition duration-300 focus:outline-none">Login</a>
+            <a href="{% url 'register' %}" class="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition duration-300 focus:outline-none">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="flex-grow container mx-auto p-4 mt-6"> {# Structural Change: Added flex-grow to main #}
+        <section class="profile-header mb-6"> {# Structural Change: Changed div to section #}
+            <img src="{% if user_profile.profile_picture %}{{ user_profile.profile_picture.url }}{% else %}https://placehold.co/120x120/4CAF50/FFFFFF?text=P{% endif %}" alt="{{ user_profile.username }}'s Profile Picture" class="profile-image mx-auto rounded-full mb-4">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ user_profile.username }}</h1>
+            {% if user_profile.email %}
+            <p class="text-gray-600 mb-2">{{ user_profile.email }}</p>{% endif %}
+            {% if user_profile.bio %}
+            <p class="text-gray-700 max-w-lg mx-auto mb-4">{{ user_profile.bio }}</p>{% endif %}
+
+            <div class="flex justify-center space-x-8 text-gray-700 profile-stats mb-4">
+                <div>
+                    <span class="block text-xl font-bold">{{ posts.count }}</span>
+                    <span class="text-sm">Posts</span>
+                </div>
+                <div>
+                    <span class="block text-xl font-bold" id="followers-count">{{ followers_count }}</span> {# Structural Change: Added ID #}
+                    <span class="text-sm">Followers</span>
+                </div>
+                <div>
+                    <span class="block text-xl font-bold">{{ following_count }}</span>
+                    <span class="text-sm">Following</span>
+                </div>
+            </div>
+
+            {% if is_owner %}
+            <a href="{% url 'profile_edit' %}" class="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition duration-300 focus:outline-none inline-block">

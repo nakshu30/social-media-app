@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - MiniSocial</title> {# Structural Change: Added " - MiniSocial" to title #}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> {# Structural Change: Added Font Awesome for potential future icons #}
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 28rem;
+        }
+
+        /* Structural Change: Modified selectors to target .form-group */
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .errorlist {
+            color: #EF4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .errorlist li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="flex flex-col items-center justify-center min-h-screen"> {# Structural Change: Added main tag for semantic structure #}
+        <section class="form-container"> {# Structural Change: Changed div to section for semantic grouping #}
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Register for MiniSocial</h2>
+            <form method="post" class="space-y-6"> {# Structural Change: Increased space-y to 6 #}
+                {% csrf_token %}
+
+                {# Structural Change: Consolidated non-field errors into a single block with styling #}
+                {% if form.non_field_errors %}
+                <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
+                    <ul class="errorlist !mt-0">
+                        {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {# Structural Change: Explicitly rendering each field for more control #}
+                <div class="form-group">
+                    {{ form.username.label_tag }}
+                    {{ form.username|add_class:"w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-transparent" }}
+                    {% if form.username.help_text %}
+                    <p class="text-gray-500 text-sm mt-1">{{ form.username.help_text }}</p>
+                    {% endif %}
+                    {% if form.username.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.username.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email|add_class:"w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-transparent" }}
+                    {% if form.email.help_text %}
+                    <p class="text-gray-500 text-sm mt-1">{{ form.email.help_text }}</p>
+                    {% endif %}
+                    {% if form.email.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.email.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.password.label_tag }}
+                    {{ form.password|add_class:"w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-transparent" }}
+                    {% if form.password.help_text %}
+                    <p class="text-gray-500 text-sm mt-1">{{ form.password.help_text }}</p>
+                    {% endif %}
+                    {% if form.password.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.password.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.password2.label_tag }}
+                    {{ form.password2|add_class:"w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-transparent" }}
+                    {% if form.password2.help_text %}
+                    <p class="text-gray-500 text-sm mt-1">{{ form.password2.help_text }}</p>
+                    {% endif %}
+                    {% if form.password2.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.password2.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Register</button>
+            </form>
+            <p class="text-center text-gray-600 mt-6">Already have an account? <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Login here</a></p>
+        </section>
+    </main>
+</body>
+
+</html>

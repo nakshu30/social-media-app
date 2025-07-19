@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MiniSocial</title> {# Structural Change: Added "MiniSocial" to title for clarity #}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 28rem;
+        }
+
+        /* Structural Change: Removed .form-field div as we will wrap fields explicitly in HTML */
+        /* For Django's default <p> tags around fields */
+        .form-group label { /* Structural Change: Changed .form-field label to .form-group label */
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .form-group input { /* Structural Change: Changed .form-field input to .form-group input */
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus { /* Structural Change: Changed .form-field input:focus to .form-group input:focus */
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .errorlist {
+            color: #EF4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .errorlist li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="form-container"> {# Structural Change: Changed div to main for semantic meaning #}
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Login to MiniSocial</h2>
+        <form method="post" class="space-y-6"> {# Structural Change: Increased space-y from 4 to 6 for more vertical separation #}
+            {% csrf_token %}
+
+            {# Structural Change: Consolidated non-field errors into a single block #}
+            {% if form.non_field_errors %}
+            <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md"> {# Added styling to non-field errors #}
+                <ul class="errorlist !mt-0"> {# !mt-0 to override default margin-top #}
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {# Structural Change: Explicitly wrapping each field for better control #}
+            <div class="form-group">
+                {{ form.username.label_tag }}
+                {{ form.username|add_class:"w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-transparent" }} {# Added Tailwind classes directly #}
+                {% if form.username.errors %}
+                <ul class="errorlist">
+                    {% for error in form.username.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label_tag }}
+                {{ form.password|add_class:"w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-transparent" }} {# Added Tailwind classes directly #}
+                {% if form.password.errors %}
+                <ul class="errorlist">
+                    {% for error in form.password.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Login</button>
+        </form>
+        <p class="text-center text-gray-600 mt-6">Don't have an account? <a href="{% url 'register' %}" class="text-blue-600 hover:underline">Register here</a></p>
+    </main>
+</body>
+
+</html>
